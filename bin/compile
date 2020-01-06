@@ -12,8 +12,15 @@ if [ ! -f "$ENV_DIR/MAXMIND_DB_NAME" ]; then
   exit 1
 fi
 
+if [ ! -f "$ENV_DIR/MAXMIND_HOST" ]; then
+  echo "-----> You need to set the environment variable MAXMIND_HOST"
+
+  exit 1
+fi
+
 MAXMIND_DB_NAME=`cat $ENV_DIR/MAXMIND_DB_NAME`
 MAXMIND_FULL_DB_NAME="GeoLite2-$MAXMIND_DB_NAME"
+MAXMIND_HOST=`cat $ENV_DIR/MAXMIND_HOST`
 
 mkdir -p $CACHE_DIR
 
@@ -43,7 +50,7 @@ if [ ! -f $DB ]; then
   if [ ! -f $ARCHIVE ]; then
     echo "-----> $MAXMIND_FULL_DB_NAME: Database does not exist in cache, downloading."
 
-    url="http://geolite.maxmind.com/download/geoip/database/$MAXMIND_FULL_DB_NAME"
+    url="http://$MAXMIND_HOST/download/geoip/database/$MAXMIND_FULL_DB_NAME"
 
     curl -o $ARCHIVE -L "$url.mmdb.gz"
     curl -o $CHECKSUM_FILE -L "$url.md5"
